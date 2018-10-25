@@ -20,5 +20,7 @@ public abstract class Card {
 	public abstract void setX(int x);
 	public abstract void setY(int y);
 	public abstract void setLocation(int x, int y);
+	public abstract void setMarketPlace(boolean b);
+	public abstract boolean getMarketPlace();
 	
 }

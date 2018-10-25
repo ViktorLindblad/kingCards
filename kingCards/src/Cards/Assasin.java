@@ -8,15 +8,15 @@ import java.awt.Rectangle;
 import kingCards.Handler;
 import kingCards.King;
 
-public class SoldierCard extends Card{
+public class Assasin extends Card{
 
-	private int attackPower,defencePower,APCost,cardID,cardCost,x,y;
+	private int attackPower,defencePower,APCost,cardID,cardCost,x,y,frameCounter;
 	private Rectangle cardRectangle;
 	private King king;
 	private Handler handler;
 	private boolean market,special;
 	
-	public SoldierCard(int attackPower,int defencePower,int APCost,int cardID,int cardCost,King king,Handler handler){
+	public Assasin(int attackPower,int defencePower,int APCost,int cardID,int cardCost,King king,Handler handler){
 		this.APCost = APCost;
 		this.attackPower = attackPower;
 		this.cardCost = cardCost;
@@ -25,9 +25,19 @@ public class SoldierCard extends Card{
 		cardRectangle = new Rectangle(0,0,WIDTH,HEIGHT);
 		this.king = king;
 		this.handler = handler;
-		special = false;
+		special = true;
 	}
 	
+	public Assasin(Assasin assasin,King king,Handler handler){
+		this.APCost = getActionPointCost();
+		this.attackPower = getAttack();
+		this.cardCost = getCost();
+		this.cardID = getCardID();
+		this.defencePower = assasin.getDefencePower();
+		cardRectangle = new Rectangle(0,0,WIDTH,HEIGHT);
+		this.king = king;
+		this.handler = handler;
+	}
 
 	public int getAttack() {return attackPower;}
 	public int getDefencePower() {return defencePower;}
@@ -41,7 +51,6 @@ public class SoldierCard extends Card{
 	public int getY(){return y;}
 	
 	public void playCard() {
-		
 		if(king.getKingActionPoints()>=APCost){
 			king.addAttackPower(attackPower);
 			king.addDefencePower(defencePower);
@@ -73,20 +82,34 @@ public class SoldierCard extends Card{
 		this.y = y;
 	}
 	
+	private void buyCard(){
+		if(cardCost<=king.getCoins()){
+			
+			king.addCoins(-cardCost);
+			king.addCardToDiscardedPile(new Assasin(this,king,handler));
+		}
+	}
+	
 	public void tick(){
-
+		frameCounter++;
 		if(handler.getMouseManager().clicked&&
 				cardRectangle.contains(new Point(handler.getMouseManager().getX(),
 				handler.getMouseManager().getY()))){
+			if(market&&frameCounter>120){
+				System.out.println("buyCard");
+				buyCard();
+				frameCounter=0;
+			} else if(!market){
 				playCard();
+			}
 		}
 	}
 	
 
 	
 	public void render(Graphics g){
-		g.setColor(Color.black);
-		g.drawRect(cardRectangle.x, cardRectangle.y, 32, 64);
+		g.setColor(Color.ORANGE);
+		g.drawRect(cardRectangle.x, cardRectangle.y, WIDTH, HEIGHT);
 	}
 	
 	public void setMarketPlace(boolean b) {

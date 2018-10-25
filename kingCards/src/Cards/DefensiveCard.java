@@ -15,6 +15,7 @@ public class DefensiveCard extends Card{
 	private Rectangle cardRectangle;
 	private King king;
 	private Handler handler;
+	private boolean market,special;
 	
 	public DefensiveCard(int attackPower,int defencePower,int APCost,int cardID,int cardCost,King king,Handler handler){
 		this.APCost = APCost;
@@ -25,6 +26,7 @@ public class DefensiveCard extends Card{
 		cardRectangle = new Rectangle(0,0,WIDTH,HEIGHT);
 		this.king = king;
 		this.handler = handler;
+		special = false;
 	}
 	
 
@@ -34,8 +36,11 @@ public class DefensiveCard extends Card{
 	public int getCardID() {return cardID;}
 	public int getCost() {return cardCost;}
 	public Rectangle getRectangle() {return cardRectangle;}
-
-
+	public boolean getMarketPlace() {return market;}
+	public boolean haveSpecialMove(){return special;}
+	public int getX(){return x;}
+	public int getY(){return y;}
+	
 	public void playCard() {
 		if(king.getKingActionPoints()>=APCost){
 			king.addAttackPower(attackPower);
@@ -69,18 +74,27 @@ public class DefensiveCard extends Card{
 	}
 	
 	public void tick(){
-
+		
 		if(handler.getMouseManager().clicked&&
 				cardRectangle.contains(new Point(handler.getMouseManager().getX(),
 				handler.getMouseManager().getY()))){
+			
 			playCard();
 		}
 	}
-	
+
 	public void render(Graphics g){
 		g.setColor(Color.GREEN);
 		g.drawRect(cardRectangle.x, cardRectangle.y, 32, 64);
 	}
+
+	public void setMarketPlace(boolean b) {
+		market = b;
+		
+	}
+
+
+
 		
 
 }

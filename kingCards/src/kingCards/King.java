@@ -8,24 +8,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
+import Cards.Assasin;
 import Cards.Card;
 import Cards.DefensiveCard;
 import Cards.SoldierCard;
 
 public class King {
+	
+	public static final int RED=1,BLUE=0;
 
-	private int HP,defencePower,attackPower,actionPoints,x,y,color,width,height;
+	private int HP,defencePower,attackPower,actionPoints,x,y,color,width,height,coins,buyPoints;
 	private ArrayList<Card> discardedCards,cardsToPlay,cardsOnHand;
 	private Stack<Card> removeFromHandQueue;
 	private Handler handler;
 	private boolean newRound,readyForNewRound;
 	private Rectangle hitBox;
+	private MarketPlace marketPlace;
 	
 	public King(int HP,int x,int y,Handler handler,int color){
+		
 		this.HP = HP;
 		this.color = color;
 		defencePower = 0;
 		attackPower = 0;
+		buyPoints = 1;
 		hitBox = new Rectangle(x,y,132,132);
 		actionPoints = 3;
 		removeFromHandQueue = new Stack<Card>();
@@ -33,6 +39,7 @@ public class King {
 		this.x = x;
 		this.y = y;
 		width = 164;
+		this.coins = 0;
 		height = 164;
 		newRound = true;
 		readyForNewRound = false;
@@ -40,6 +47,12 @@ public class King {
 		cardsToPlay = new ArrayList<Card>();
 		cardsOnHand = new ArrayList<Card>();
 		addRegularCards();
+		
+		ArrayList<Card> marketCard = new ArrayList<Card>();
+		marketCard.add(new Assasin(0,0,1,0,0,this,handler));
+		
+		marketPlace = new MarketPlace(marketCard,this);
+		
 	}
 	
 	private void addRegularCards(){
@@ -61,6 +74,18 @@ public class King {
 	public ArrayList<Card> getDeckCards(){return cardsToPlay;}
 	public ArrayList<Card> getCardsOnHand(){return cardsOnHand;}
 	public boolean getReady(){return readyForNewRound;}
+	public int getCoins() {return coins;}
+	public int getWindowWidth(){return handler.getWidth();}
+	public int getWindowHeight(){return handler.getHeight();}
+	public int getBuyPoints(){return buyPoints;}
+	
+	public void addBuyPoints(int bp){
+		buyPoints-=bp;
+	}
+	
+	public void addCoins(int coins){
+		this.coins+=coins;
+	}
 	
 	public void addCardToDiscardedPile(Card card){
 		removeFromHandQueue.add(card);
@@ -89,6 +114,7 @@ public class King {
 		attackPower = 0;
 		defencePower = 0;
 		actionPoints = 3;
+		buyPoints = 1;
 		Stack<Card> s = new Stack<Card>();
 		for(Card card:cardsOnHand){
 			s.push(card);
@@ -100,6 +126,7 @@ public class King {
 			discardedCards.add(card);
 		}
 		newRound = true;
+		coins++;
 	}
 	
 	public void takeHit(int AP){
@@ -184,9 +211,11 @@ public class King {
 				x+=64;
 			}
 		}
+		marketPlace.tick();
 		for(Card card:cardsOnHand){
 			card.tick();
 		}
+		
 		if(handler.getMouseManager().clicked&&
 				hitBox.contains(new Point(handler.getMouseManager().getX(),handler.getMouseManager().getY()))&&actionPoints!=3){
 			readyForNewRound = true;
@@ -195,6 +224,7 @@ public class King {
 	
 
 	public void render(Graphics g) {
+		marketPlace.render(g);
 		for(Card card:cardsOnHand){
 			card.render(g);
 		}
@@ -209,5 +239,12 @@ public class King {
 		g.drawString("DefencePower: "+defencePower, x, y+24);
 		g.drawString("ActionPoints: "+actionPoints, x, y+36);
 		g.drawString("Health: "+HP, x, y+48);
+		g.drawString("Coins: "+coins, x, y+60);
 	}
+
+	public int getColor() {
+		return color;
+	}
+
+
 }

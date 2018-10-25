@@ -3,9 +3,10 @@ package kingCards;
 
 public class Timer {
 
-	private float alarm;
-	private float start;
-	private float time;
+	private float alarm,tempAlarm;
+	private int alarmInt;
+	private float start,second=1000000000;
+	private float time,lastTime;
 	private boolean alert;
 	
 	public Timer(){
@@ -15,17 +16,36 @@ public class Timer {
 	public Timer(float alarm){
 		if(alarm!=0){
 			this.alarm = alarm*1000000000;
+			this.tempAlarm = alarm*1000000000;
 			start = System.nanoTime();
 			alert=false;
 		} else {
 			start = System.nanoTime();
 			alert=false;
 		}
+		lastTime = System.nanoTime();
 	}
+	
+	public Timer(int alarm){
+		if(alarm!=0){
+			this.alarmInt = alarm;
+			this.alarm = alarm*1000000000;
+			start = System.nanoTime();
+			alert=false;
+		} else {
+			start = System.nanoTime();
+			alert=false;
+		}
+		lastTime = System.nanoTime();
+	}
+	
 	
 	public void tick(){
 		time = System.nanoTime();
-		
+		if(time-lastTime>=second){
+			alarmInt--;
+			lastTime=System.nanoTime();
+		}
 		if(time-start>=alarm){
 			alarm();
 		}
@@ -55,5 +75,9 @@ public class Timer {
 	public String getCurrentTime(){
 		
 		return Float.toString((time-start)/1000000000);
+	}
+	
+	public String getCountDownTimer(){
+		return Integer.toString(alarmInt);
 	}
 }

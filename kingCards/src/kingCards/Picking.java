@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Random;
 
 import Cards.Assasin;
 import Cards.Card;
@@ -17,19 +18,19 @@ public class Picking {
 	private Handler handler;
 	private Rectangle done;
 	private Timer timer;
-	private int counter;
-	private boolean myTurn;
+	private int counter,turnCounter,animate;
+	private boolean myTurn,alarm;
 	
 	public Picking(King redKing,King blueKing, Handler handler){
 		this.handler = handler;
 		this.redKing = redKing;
 		this.blueKing = blueKing;
-		
+		turnCounter++;
 		this.redCards = new ArrayList<Card>();
 		this.blueCards = new ArrayList<Card>();
 		redCards.add(new Assasin(0,0,2,2,2,redKing,handler));
 		redCards.add(new Priest(0,0,1,3,5,redKing,handler));
-		
+		alarm = true;
 		blueCards.add(new Assasin(0,0,2,2,2,blueKing,handler));
 		blueCards.add(new Priest(0,0,1,3,5,blueKing,handler));
 		
@@ -44,7 +45,7 @@ public class Picking {
 			counter++;
 			x+=Card.WIDTH*2;
 		}
-		
+		x=Card.WIDTH;y=Card.HEIGHT*2;counter=0;
 		for(Card card:blueCards){
 			if(counter>=10){
 				y+=Card.HEIGHT*2;
@@ -57,48 +58,80 @@ public class Picking {
 	}
 	
 	public void turnDone(){
-		System.out.println("new turn");
-		setTimer();
+		turnCounter++;
+		System.out.println("new turn number: "+turnCounter);
 		myTurn = !myTurn;
+		if(turnCounter>=10){
+			System.out.println("5 cards have been picked each, starting the game");
+			handler.setState(Handler.GAME);
+		}
+		animate = 120;
+		alarm = true;
 	}
 	
 	private void setTimer(){
 		timer = new Timer(45);
 	}
 	
-	public void tick(){
-		timer.tick();
+	private void random(){
 		if(myTurn){
-			for(Card card:redCards){
-				card.tick();
+			int index = redCards.size()-1;
+			Random random = new Random();
+			redKing.getSelectedCards().add(new Card(redCards.get(random.nextInt(index)),redKing,handler));
+			
+		} else {
+			int index = blueCards.size()-1;
+			Random random = new Random();
+			blueKing.getSelectedCards().add(new Card(blueCards.get(random.nextInt(index)),blueKing,handler));
+		}
+	}
+	
+	public void tick(){
+		animate--;
+		if(animate<0){
+			if(alarm){
+				alarm= false;
+				setTimer();
+			}
+			timer.tick();
+			if(timer.getAlert()){
+				random();
+			}
+			if(myTurn){
+				for(Card card:redCards){
+					card.tick();
+				}
+			} else {
+				for(Card card:blueCards){
+					card.tick();
+				}
+			}
+			if(handler.getMouseManager().clicked&&done.contains(new Point(handler.getMouseManager().getX(),
+																		handler.getMouseManager().getY()))){
+				handler.setState(Handler.GAME);
 			}
 		} else {
-			for(Card card:blueCards){
-				card.tick();
-			}
+			//ANIMATION HERE
 		}
-		if(handler.getMouseManager().clicked&&done.contains(new Point(handler.getMouseManager().getX(),
-																	handler.getMouseManager().getY()))){
-			handler.setState(Handler.GAME);
-		}
+
 		
 	}
 	
 	public void render(Graphics g){
 		if(myTurn){
-			g.drawString("Reds turn", handler.getWidth()/2-timer.getCurrentTime().length(),Card.HEIGHT+Card.HEIGHT/2);
+			g.drawString("Reds turn", handler.getWidth()/2,Card.HEIGHT+Card.HEIGHT/2);
 			for(Card card:redCards){
 				card.render(g);
 			}
 
 		} else {
-			g.drawString("Blues turn", handler.getWidth()/2-timer.getCurrentTime().length(),Card.HEIGHT+Card.HEIGHT/2);
+			g.drawString("Blues turn", handler.getWidth()/2,Card.HEIGHT+Card.HEIGHT/2);
 			for(Card card:blueCards){
 				card.render(g);
 			}
 		}
 
-		g.drawString(timer.getCurrentTime(), handler.getWidth()/2-timer.getCurrentTime().length(),Card.HEIGHT);
+		g.drawString(timer.getCountDownTimer(), handler.getWidth()/2,Card.HEIGHT);
 		g.setColor(Color.GREEN);
 		g.fillRect(done.x,done.y,done.width,done.height);
 	}

@@ -85,7 +85,7 @@ public class DefensiveCard extends Card{
 
 	public void render(Graphics g){
 		g.setColor(Color.GREEN);
-		g.drawRect(cardRectangle.x, cardRectangle.y, 32, 64);
+		g.drawRect(cardRectangle.x, cardRectangle.y, Card.WIDTH, Card.HEIGHT);
 	}
 
 	public void setMarketPlace(boolean b) {

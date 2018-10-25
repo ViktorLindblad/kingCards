@@ -29,10 +29,10 @@ public class Assasin extends Card{
 	}
 	
 	public Assasin(Assasin assasin,King king,Handler handler){
-		this.APCost = getActionPointCost();
-		this.attackPower = getAttack();
-		this.cardCost = getCost();
-		this.cardID = getCardID();
+		this.APCost = assasin.getActionPointCost();
+		this.attackPower = assasin.getAttack();
+		this.cardCost = assasin.getCost();
+		this.cardID = assasin.getCardID();
 		this.defencePower = assasin.getDefencePower();
 		cardRectangle = new Rectangle(0,0,WIDTH,HEIGHT);
 		this.king = king;
@@ -87,21 +87,33 @@ public class Assasin extends Card{
 			
 			king.addCoins(-cardCost);
 			king.addCardToDiscardedPile(new Assasin(this,king,handler));
+			System.out.println(king.getDiscardedCards().size());
 		}
+	}
+	
+	private void selectCard(){
+		System.out.println("Card selected");
+		king.getSelectedCards().add(new Assasin(this,king,handler));
+		handler.getPicking().turnDone();
 	}
 	
 	public void tick(){
 		frameCounter++;
 		if(handler.getMouseManager().clicked&&
 				cardRectangle.contains(new Point(handler.getMouseManager().getX(),
-				handler.getMouseManager().getY()))){
-			if(market&&frameCounter>120){
+				handler.getMouseManager().getY()))&&frameCounter>120){
+			frameCounter=0;
+			
+			if(handler.getGameState()==Handler.PICKING){
+				selectCard();
+			} else if(market&&handler.getGameState()==Handler.GAME){
 				System.out.println("buyCard");
 				buyCard();
-				frameCounter=0;
-			} else if(!market){
+				
+			} else if(!market&&handler.getGameState()==Handler.GAME){
 				playCard();
-			}
+			} 
+			
 		}
 	}
 	

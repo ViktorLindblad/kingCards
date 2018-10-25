@@ -18,7 +18,7 @@ public class King {
 	public static final int RED=1,BLUE=0;
 
 	private int HP,defencePower,attackPower,actionPoints,x,y,color,width,height,coins,buyPoints;
-	private ArrayList<Card> discardedCards,cardsToPlay,cardsOnHand;
+	private ArrayList<Card> discardedCards,cardsToPlay,cardsOnHand,selectedCards;
 	private Stack<Card> removeFromHandQueue;
 	private Handler handler;
 	private boolean newRound,readyForNewRound;
@@ -46,13 +46,14 @@ public class King {
 		discardedCards = new ArrayList<Card>();
 		cardsToPlay = new ArrayList<Card>();
 		cardsOnHand = new ArrayList<Card>();
+		selectedCards = new ArrayList<Card>();
 		addRegularCards();
 		
 		ArrayList<Card> marketCard = new ArrayList<Card>();
 		marketCard.add(new Assasin(0,0,1,0,0,this,handler));
 		
 		marketPlace = new MarketPlace(marketCard,this);
-		
+
 	}
 	
 	private void addRegularCards(){
@@ -73,11 +74,13 @@ public class King {
 	public ArrayList<Card> getDiscardedCards(){return discardedCards;}
 	public ArrayList<Card> getDeckCards(){return cardsToPlay;}
 	public ArrayList<Card> getCardsOnHand(){return cardsOnHand;}
+	public ArrayList<Card> getSelectedCards(){return selectedCards;}
 	public boolean getReady(){return readyForNewRound;}
 	public int getCoins() {return coins;}
 	public int getWindowWidth(){return handler.getWidth();}
 	public int getWindowHeight(){return handler.getHeight();}
 	public int getBuyPoints(){return buyPoints;}
+	public int getColor() {return color;}
 	
 	public void addBuyPoints(int bp){
 		buyPoints-=bp;
@@ -190,61 +193,62 @@ public class King {
 
 
 	public void tick() {
-		while(!removeFromHandQueue.isEmpty()){
-			cardsOnHand.remove(removeFromHandQueue.pop());
-		}
-		if(newRound){
-			readyForNewRound = false;
-			newRound = false;
-			drawCardsFromPile();
-			int x = (handler.getWidth()/2)-((Card.WIDTH*4)+Card.WIDTH/2);
-			for(Card card:cardsOnHand){
-				card.setX(x);
-				if(color==1){
-					card.setY(height+Card.HEIGHT);
-					card.setLocation(x,height+Card.HEIGHT);
-				} else {
-					card.setY(handler.getHeight()-(height+Card.HEIGHT*2));
-					card.setLocation(x,handler.getHeight()-(height+Card.HEIGHT*2));
-				}
-				
-				x+=64;
+		if(handler.getGameState()==Handler.GAME){
+			while(!removeFromHandQueue.isEmpty()){
+				cardsOnHand.remove(removeFromHandQueue.pop());
 			}
-		}
-		marketPlace.tick();
-		for(Card card:cardsOnHand){
-			card.tick();
-		}
-		
-		if(handler.getMouseManager().clicked&&
-				hitBox.contains(new Point(handler.getMouseManager().getX(),handler.getMouseManager().getY()))&&actionPoints!=3){
-			readyForNewRound = true;
-		}
+			if(newRound){
+				readyForNewRound = false;
+				newRound = false;
+				drawCardsFromPile();
+				int x = (handler.getWidth()/2)-((Card.WIDTH*4)+Card.WIDTH/2);
+				for(Card card:cardsOnHand){
+					card.setX(x);
+					if(color==1){
+						card.setY(height+Card.HEIGHT/2);
+						card.setLocation(x,height+Card.HEIGHT/2);
+					} else {
+						card.setY(handler.getHeight()-(height+Card.HEIGHT+card.HEIGHT/2));
+						card.setLocation(x,handler.getHeight()-(height+Card.HEIGHT+Card.HEIGHT/2));
+					}
+					
+					x+=Card.WIDTH*2;
+				}
+			}
+			marketPlace.tick();
+			for(Card card:cardsOnHand){
+				card.tick();
+			}
+			
+			if(handler.getMouseManager().clicked&&
+					hitBox.contains(new Point(handler.getMouseManager().getX(),handler.getMouseManager().getY()))&&actionPoints!=3){
+				readyForNewRound = true;
+			}
+		} 
 	}
 	
 
 	public void render(Graphics g) {
-		marketPlace.render(g);
-		for(Card card:cardsOnHand){
-			card.render(g);
+		if(handler.getGameState()==Handler.GAME){
+			marketPlace.render(g);
+			for(Card card:cardsOnHand){
+				card.render(g);
+			}
+			if(color==1){
+				g.setColor(Color.RED);
+			} else {
+				g.setColor(Color.BLUE);
+			}
+			g.fillRect(x, y, width, height);
+			g.setColor(Color.WHITE);
+			g.drawString("AttackPower: "+attackPower, x, y+12);
+			g.drawString("DefencePower: "+defencePower, x, y+24);
+			g.drawString("ActionPoints: "+actionPoints, x, y+36);
+			g.drawString("Health: "+HP, x, y+48);
+			g.drawString("Coins: "+coins, x, y+60);
 		}
-		if(color==1){
-			g.setColor(Color.RED);
-		} else {
-			g.setColor(Color.BLUE);
-		}
-		g.fillRect(x, y, width, height);
-		g.setColor(Color.WHITE);
-		g.drawString("AttackPower: "+attackPower, x, y+12);
-		g.drawString("DefencePower: "+defencePower, x, y+24);
-		g.drawString("ActionPoints: "+actionPoints, x, y+36);
-		g.drawString("Health: "+HP, x, y+48);
-		g.drawString("Coins: "+coins, x, y+60);
 	}
 
-	public int getColor() {
-		return color;
-	}
 
 
 }

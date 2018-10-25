@@ -17,6 +17,7 @@ public class Game implements Runnable {
 	private BufferStrategy bs;
 	private King redKing,blueKing;
 	private Graphics g;
+	private Picking picking;
 	
 	public Game(int width, int height){
 		keyManager = new KeyManager();
@@ -109,22 +110,31 @@ public class Game implements Runnable {
 		display.getCanvas().addMouseListener(mm);
 		display.getCanvas().addMouseMotionListener(mm);
 		handler = new Handler(this);
-		
+		handler.setState(Handler.PICKING);
 		redKing = new King(100,(width/2)-82,0,handler,1);
 		blueKing = new King(100,(width/2)-82,height-164,handler,0);
+		
+		picking = new Picking(redKing,blueKing,handler);
+		handler.setPicking(picking);
+		
 	}
 	
+	
 	private void update(){
-		
 		keyManager.tick();
 		mm.tick();
-		redKing.tick();
-		blueKing.tick();
-		if(redKing.getReady()&&blueKing.getReady()){
-			redKing.takeHit(blueKing.getKingAttackPower());
-			blueKing.takeHit(redKing.getKingAttackPower());
-			redKing.setUpForNewRound();
-			blueKing.setUpForNewRound();
+		if(handler.getGameState()==Handler.PICKING){
+			 picking.tick();
+		} else {
+
+			redKing.tick();
+			blueKing.tick();
+			if(redKing.getReady()&&blueKing.getReady()){
+				redKing.takeHit(blueKing.getKingAttackPower());
+				blueKing.takeHit(redKing.getKingAttackPower());
+				redKing.setUpForNewRound();
+				blueKing.setUpForNewRound();
+			}
 		}
 		render();
 	}
@@ -149,9 +159,13 @@ public class Game implements Runnable {
 		//clear screen
 		
 		g.clearRect(0, 0, width, height);
-
-		redKing.render(g);
-		blueKing.render(g);
+		
+		if(handler.getGameState()==Handler.PICKING){
+			picking.render(g);
+		} else {
+			redKing.render(g);
+			blueKing.render(g);
+		}
 		//End drawing
 		bs.show();
 		g.dispose();

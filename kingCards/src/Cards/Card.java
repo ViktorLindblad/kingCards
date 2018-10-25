@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 
 public abstract class Card {
 
-	public static final int WIDTH=32,HEIGHT=64;
+	public static final int WIDTH=64,HEIGHT=128;
 	
 	abstract int getAttack();
 	abstract int getDefencePower();

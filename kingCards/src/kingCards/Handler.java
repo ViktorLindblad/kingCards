@@ -2,9 +2,12 @@ package kingCards;
 
 public class Handler {
 
+	public static final int PICKING=0, GAME=1,MENU=2;
+	
 	private Game game;
 	private int state;
 	private MouseManager mm;
+	private Picking picking;
 	
 	public Handler(Game game){
 		this.game = game;
@@ -29,6 +32,19 @@ public class Handler {
 
 	public int getHeight() {
 		return game.getDisplay().getHeight();
+	}
+	
+	public void setState(int state) {
+		this.state = state;
+		
+	}
+	
+	public Picking getPicking(){
+		return picking;
+	}
+	
+	public void setPicking(Picking p){
+		picking = p;
 	}
 	
 }

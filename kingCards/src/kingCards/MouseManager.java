@@ -46,13 +46,6 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 	}
 	
 	public void mouseClicked(MouseEvent e) {
-		
-		if(e.getButton() == MouseEvent.BUTTON1){
-			clicked = true;
-		}
-		if(e.getButton() == MouseEvent.BUTTON3){
-			notclicked = true;
-		}
 
 	}
 
@@ -65,6 +58,12 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
+		if(e.getButton() == MouseEvent.BUTTON1){
+			clicked = true;
+		}
+		if(e.getButton() == MouseEvent.BUTTON3){
+			notclicked = true;
+		}
 		x=mouseMovedX;
 		y=mouseMovedY;
 

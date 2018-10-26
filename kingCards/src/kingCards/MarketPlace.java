@@ -21,7 +21,7 @@ public class MarketPlace {
 			} else {
 				card.setLocation(king.getWindowWidth()-(Card.WIDTH)*2, Card.HEIGHT+y);
 			}
-			y+=card.HEIGHT;
+			y+=card.HEIGHT+card.HEIGHT/2;
 		}
 	}
 	

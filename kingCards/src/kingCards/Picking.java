@@ -61,8 +61,10 @@ public class Picking {
 		turnCounter++;
 		System.out.println("new turn number: "+turnCounter);
 		myTurn = !myTurn;
-		if(turnCounter>=10){
+		if(turnCounter>6){
 			System.out.println("5 cards have been picked each, starting the game");
+			redKing.setUpMarket();
+			blueKing.setUpMarket();
 			handler.setState(Handler.GAME);
 		}
 		animate = 120;
@@ -78,12 +80,12 @@ public class Picking {
 			int index = redCards.size()-1;
 			Random random = new Random();
 			redKing.getSelectedCards().add(new Card(redCards.get(random.nextInt(index)),redKing,handler));
-			
 		} else {
 			int index = blueCards.size()-1;
 			Random random = new Random();
 			blueKing.getSelectedCards().add(new Card(blueCards.get(random.nextInt(index)),blueKing,handler));
 		}
+		turnDone();
 	}
 	
 	public void tick(){

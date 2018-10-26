@@ -10,7 +10,7 @@ import kingCards.King;
 
 public class Card {
 
-	public static final int WIDTH=64,HEIGHT=128;
+	public static final int WIDTH=64,HEIGHT=128,ASSASSIN=2,PRIEST=3;
 
 	protected int attackPower,defencePower,APCost,cardID,cardCost,x,y,frameCounter;
 	protected Rectangle cardRectangle;
@@ -95,19 +95,24 @@ public class Card {
 	}
 	
 	public void selectCard(){
-		System.out.println("Card selected");
+
+		System.out.println("Card selected"+king.getSelectedCards().size());
 		king.getSelectedCards().add(new Card(this,king,handler));
 		handler.getPicking().turnDone();
 	}
 	
 	public void tick(){
+		System.out.println(king.getSelectedCards().size());
 		frameCounter++;
+		System.out.println(handler.getMouseManager().clicked +" "+handler.getMouseManager().getX() +" "+handler.getMouseManager().getY());
 		if(handler.getMouseManager().clicked&&
 				cardRectangle.contains(new Point(handler.getMouseManager().getX(),
 				handler.getMouseManager().getY()))&&frameCounter>120){
-			frameCounter=0;
 			
+			frameCounter=0;
+
 			if(handler.getGameState()==Handler.PICKING){
+				System.out.println("selecting");
 				selectCard();
 			} else if(market&&handler.getGameState()==Handler.GAME){
 				System.out.println("buyCard");
@@ -125,7 +130,11 @@ public class Card {
 	}
 	
 	public void render(Graphics g){
-		g.setColor(Color.ORANGE);
+		if(cardID==ASSASSIN){
+			g.setColor(Color.ORANGE);
+		} else if(cardID==PRIEST){
+			g.setColor(Color.blue);
+		}
 		g.drawRect(cardRectangle.x, cardRectangle.y, WIDTH, HEIGHT);
 	}
 	

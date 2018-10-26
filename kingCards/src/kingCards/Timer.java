@@ -29,7 +29,7 @@ public class Timer {
 	public Timer(int alarm){
 		if(alarm!=0){
 			this.alarmInt = alarm;
-			this.alarm = alarm*1000000000;
+			this.alarm = (float)alarm*1000000000;
 			start = System.nanoTime();
 			alert=false;
 		} else {
@@ -46,7 +46,8 @@ public class Timer {
 			alarmInt--;
 			lastTime=System.nanoTime();
 		}
-		if(time-start>=alarm){
+		if((time-start)>=alarm){
+			System.out.println((time-start)+" "+alarm);
 			alarm();
 		}
 	}

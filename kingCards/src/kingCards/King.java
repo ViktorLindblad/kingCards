@@ -48,12 +48,6 @@ public class King {
 		cardsOnHand = new ArrayList<Card>();
 		selectedCards = new ArrayList<Card>();
 		addRegularCards();
-		
-		ArrayList<Card> marketCard = new ArrayList<Card>();
-		marketCard.add(new Assasin(0,0,1,0,0,this,handler));
-		
-		marketPlace = new MarketPlace(marketCard,this);
-
 	}
 	
 	private void addRegularCards(){
@@ -81,6 +75,15 @@ public class King {
 	public int getWindowHeight(){return handler.getHeight();}
 	public int getBuyPoints(){return buyPoints;}
 	public int getColor() {return color;}
+	
+	public void setUpMarket(){
+		ArrayList<Card> marketCard = new ArrayList<Card>();
+		System.out.println("Set up new market with "+selectedCards.size()+" number of cards");
+		for(Card card: selectedCards){
+			marketCard.add(card);
+		}
+		marketPlace = new MarketPlace(marketCard,this);
+	}
 	
 	public void addBuyPoints(int bp){
 		buyPoints-=bp;

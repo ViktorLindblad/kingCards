@@ -14,7 +14,7 @@ public class SoldierCard extends Card{
 	}
 	
 	public void render(Graphics g){
-		g.setColor(Color.GREEN);
+		g.setColor(Color.RED);
 		g.drawRect(cardRectangle.x, cardRectangle.y, WIDTH, HEIGHT);
 	}
 }

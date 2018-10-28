@@ -64,7 +64,7 @@ public class Picking {
 		turnCounter++;
 		System.out.println("new turn number: "+turnCounter);
 		myTurn = !myTurn;
-		if(turnCounter>6){
+		if(turnCounter>2){
 			System.out.println("5 cards have been picked each, starting the game");
 			redKing.setUpMarket();
 			blueKing.setUpMarket();

@@ -18,12 +18,13 @@ public class King {
 	public static final int RED=1,BLUE=0;
 
 	private int HP,defencePower,attackPower,actionPoints,x,y,color,width,height,coins,buyPoints;
-	private ArrayList<Card> discardedCards,cardsToPlay,cardsOnHand,selectedCards,cardsPlayed;
+	private ArrayList<Card> animationCards,discardedCards,cardsToPlay,cardsOnHand,selectedCards,cardsPlayed;
 	private Stack<Card> removeFromHandQueue;
 	private Handler handler;
 	private boolean newRound,readyForNewRound;
 	private Rectangle hitBox;
 	private MarketPlace marketPlace;
+	
 	
 	public King(int HP,int x,int y,Handler handler,int color){
 		
@@ -43,6 +44,7 @@ public class King {
 		height = 164;
 		newRound = true;
 		readyForNewRound = false;
+		animationCards = new ArrayList<Card>();
 		discardedCards = new ArrayList<Card>();
 		cardsPlayed = new ArrayList<Card>();
 		cardsToPlay = new ArrayList<Card>();
@@ -52,11 +54,16 @@ public class King {
 	}
 	
 	private void addRegularCards(){
+		Card card;
 		for(int i=0; i<10; i++){
 			if(i<5){
-				cardsToPlay.add(new SoldierCard(4,0,1,0,0,this,handler));
+				card = new SoldierCard(4,0,1,0,0,this,handler);
+				card.setLocation(x+width+Card.WIDTH, y-12);
+				cardsToPlay.add(card);
 			} else {
-				cardsToPlay.add(new DefensiveCard(0,4,1,0,0,this,handler));
+				card = new DefensiveCard(0,4,1,1,0,this,handler);
+				card.setLocation(x+width+Card.WIDTH, y-12);
+				cardsToPlay.add(card);	
 			}
 		}
 		Collections.shuffle(cardsToPlay);
@@ -71,6 +78,7 @@ public class King {
 	public ArrayList<Card> getPlayedCards(){return cardsPlayed;}
 	public ArrayList<Card> getCardsOnHand(){return cardsOnHand;}
 	public ArrayList<Card> getSelectedCards(){return selectedCards;}
+	public ArrayList<Card> getAnimtationCards(){return animationCards;}
 	public boolean getReady(){return readyForNewRound;}
 	public int getCoins() {return coins;}
 	public int getWindowWidth(){return handler.getWidth();}
@@ -159,6 +167,7 @@ public class King {
 			Card card = s.pop();
 			cardsToPlay.add(card);
 			discardedCards.remove(card);
+			card.setLocation(x+width+Card.WIDTH, y-12);
 		}
 		Collections.shuffle(cardsToPlay);
 		System.out.println(cardsToPlay.size());
@@ -213,6 +222,16 @@ public class King {
 
 
 	public void tick() {
+		
+		if(!animationCards.isEmpty()) {
+			Card card = animationCards.get(0);
+			card.tick();
+			if(card.aimationDone()) {
+				animationCards.remove(0);
+			}
+			return;
+		}
+		
 		if(handler.getGameState()==Handler.GAME){
 			while(!removeFromHandQueue.isEmpty()){
 				cardsOnHand.remove(removeFromHandQueue.pop());
@@ -223,13 +242,13 @@ public class King {
 				drawCardsFromPile();
 				int x = (handler.getWidth()/2)-((Card.WIDTH*4)+Card.WIDTH/2);
 				for(Card card:cardsOnHand){
-					card.setX(x);
+					
 					if(color==1){
-						card.setY(height+Card.HEIGHT/2);
-						card.setLocation(x,height+Card.HEIGHT/2);
+						card.animateLocation(x,height+Card.HEIGHT/2);
+						animationCards.add(card);
 					} else {
-						card.setY(handler.getHeight()-(height+Card.HEIGHT+card.HEIGHT/2));
-						card.setLocation(x,handler.getHeight()-(height+Card.HEIGHT+Card.HEIGHT/2));
+						card.animateLocation(x,handler.getHeight()-(height+Card.HEIGHT+Card.HEIGHT/2));
+						animationCards.add(card);
 					}
 					
 					x+=Card.WIDTH*2;

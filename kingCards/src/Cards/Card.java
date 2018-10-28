@@ -12,16 +12,17 @@ public class Card {
 
 	public static final int WIDTH=64,HEIGHT=128,ASSASSIN=2,PRIEST=3;
 
-	protected int attackPower,defencePower,APCost,cardID,cardCost,x,y,frameCounter;
+	protected int vectorX,vectorY,attackPower,defencePower,APCost,cardID,cardCost,x,y,frameCounter;
 	protected Rectangle cardRectangle;
 	protected King king;
 	protected Handler handler;
-	protected boolean market,special;
+	protected boolean market,special,animationDone;
 	
 	
 	public Card(int attackPower,int defencePower,int APCost,int cardID,int cardCost,King king,Handler handler){
 		this.APCost = APCost;
 		this.attackPower = attackPower;
+		animationDone = true;
 		this.cardCost = cardCost;
 		this.cardID = cardID;
 		this.defencePower = defencePower;
@@ -40,6 +41,7 @@ public class Card {
 		cardRectangle = new Rectangle(0,0,WIDTH,HEIGHT);
 		this.king = king;
 		this.handler = handler;
+		animationDone = true;
 	}
 
 	public int getAttack() {return attackPower;}
@@ -72,7 +74,16 @@ public class Card {
 		king.addCardToDiscardedPile(this);
 	}
 	
+	public void animateLocation(int x, int y) {
+		vectorX=x;
+		vectorY=y;
+		animationDone = false;
+	}	
 	public void setLocation(int x, int y){
+		this.x = x;
+		this.y = y;
+		vectorX = x;
+		vectorY = y;
 		cardRectangle.setLocation(x,y);
 	}
 	
@@ -103,6 +114,24 @@ public class Card {
 	
 	public void tick(){
 		
+		if(x<vectorX) {
+			x+=2;
+			cardRectangle.setLocation(x,y);
+		} else if(x>vectorX) {
+			x-=2;
+			cardRectangle.setLocation(x,y);
+		}
+		if(y<vectorY) {
+			y+=2;
+			cardRectangle.setLocation(x,y);
+		} if(y>vectorY) {
+			y-=2;
+			cardRectangle.setLocation(x,y);
+		}
+		
+		if(x==vectorX&&y==vectorY) {
+			animationDone = true;
+		}
 		
 		if(handler.getMouseManager().clicked&&
 				cardRectangle.contains(new Point(handler.getMouseManager().getX(),
@@ -128,6 +157,10 @@ public class Card {
 		}
 	}
 	
+	public boolean aimationDone(){
+		return animationDone;
+	}
+	
 	public void specialMove(){
 		
 	}
@@ -147,6 +180,4 @@ public class Card {
 		market = b;
 		
 	}
-
-	
 }

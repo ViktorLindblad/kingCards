@@ -50,6 +50,6 @@ public class Display {
 	public int getHeight(){return height;}
 	
 	public static void main(String[] args){
-		Game game = new Game(1080,960);
+		Game game = new Game(1080,680);
 	}
 }

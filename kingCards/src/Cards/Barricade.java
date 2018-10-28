@@ -3,14 +3,15 @@ package Cards;
 import kingCards.Handler;
 import kingCards.King;
 
-public class Priest extends Card{
+public class Barricade extends Card {
 
-	public Priest(int attackPower,int defencePower,int APCost,int cardID,int cardCost,King king,Handler handler){
+	public Barricade(int attackPower, int defencePower, int APCost, int cardID, int cardCost, King king,
+			Handler handler) {
 		super(attackPower, defencePower, APCost, cardID, cardCost, king, handler);
 		special = true;
 	}
 	
-	public Priest(Priest a,King king,Handler handler){
+	public Barricade(Barricade a,King king,Handler handler){
 		super(a.getAttack(), a.getDefencePower(), a.getActionPointCost(), a.getCardID(), a.getCost(), king, handler);
 		special = true;
 	}
@@ -19,7 +20,7 @@ public class Priest extends Card{
 		if(cardCost<=king.getCoins()){
 			
 			king.addCoins(-cardCost);
-			king.addCardToDiscardedPile(new Priest(this,king,handler));
+			king.addCardToDiscardedPile(new Barricade(this,king,handler));
 			System.out.println(king.getDiscardedCards().size()+"barricade");
 		}
 	}
@@ -27,12 +28,12 @@ public class Priest extends Card{
 	public void selectCard(){
 
 		System.out.println("Card selected inside Barricade"+king.getSelectedCards().size());
-		king.getSelectedCards().add(new Priest(this,king,handler));
+		king.getSelectedCards().add(new Barricade(this,king,handler));
 		handler.getPicking().turnDone();
 	}
 	
-	public void specialMove(){
-		king.takeHit(-10);
-		
+	public void specialMove() {
+		king.addDefencePower(king.getKingDefencePower());
 	}
+
 }

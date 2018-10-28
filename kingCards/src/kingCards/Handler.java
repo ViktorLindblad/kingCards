@@ -47,4 +47,7 @@ public class Handler {
 		picking = p;
 	}
 	
+	public King getRedKing() {return game.getRedKing();}
+	public King getBlueKing() {return game.getBlueKing();}
+	
 }

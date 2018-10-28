@@ -5,10 +5,10 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Stack;
 
-import Cards.Assasin;
 import Cards.Card;
 import Cards.DefensiveCard;
 import Cards.SoldierCard;
@@ -18,7 +18,7 @@ public class King {
 	public static final int RED=1,BLUE=0;
 
 	private int HP,defencePower,attackPower,actionPoints,x,y,color,width,height,coins,buyPoints;
-	private ArrayList<Card> discardedCards,cardsToPlay,cardsOnHand,selectedCards;
+	private ArrayList<Card> discardedCards,cardsToPlay,cardsOnHand,selectedCards,cardsPlayed;
 	private Stack<Card> removeFromHandQueue;
 	private Handler handler;
 	private boolean newRound,readyForNewRound;
@@ -44,6 +44,7 @@ public class King {
 		newRound = true;
 		readyForNewRound = false;
 		discardedCards = new ArrayList<Card>();
+		cardsPlayed = new ArrayList<Card>();
 		cardsToPlay = new ArrayList<Card>();
 		cardsOnHand = new ArrayList<Card>();
 		selectedCards = new ArrayList<Card>();
@@ -67,6 +68,7 @@ public class King {
 	public int getKingActionPoints(){return actionPoints;}
 	public ArrayList<Card> getDiscardedCards(){return discardedCards;}
 	public ArrayList<Card> getDeckCards(){return cardsToPlay;}
+	public ArrayList<Card> getPlayedCards(){return cardsPlayed;}
 	public ArrayList<Card> getCardsOnHand(){return cardsOnHand;}
 	public ArrayList<Card> getSelectedCards(){return selectedCards;}
 	public boolean getReady(){return readyForNewRound;}
@@ -116,6 +118,8 @@ public class King {
 		attackPower += AP;
 	}
 	
+	
+	
 	public void setUpForNewRound(){
 		attackPower = 0;
 		defencePower = 0;
@@ -132,6 +136,7 @@ public class King {
 			discardedCards.add(card);
 		}
 		newRound = true;
+		selectedCards.clear();
 		coins++;
 	}
 	
@@ -157,6 +162,18 @@ public class King {
 		}
 		Collections.shuffle(cardsToPlay);
 		System.out.println(cardsToPlay.size());
+	}
+	
+	public void removeSelectedCards(){
+		selectedCards.clear();
+	}
+	
+	public void getSpecialMoves() {
+		for(Card card:selectedCards) {
+			if(card.haveSpecialMove()) {
+				card.specialMove();
+			}
+		}
 	}
 	
 	private void drawCardsFromPile(){

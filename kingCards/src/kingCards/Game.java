@@ -130,6 +130,8 @@ public class Game implements Runnable {
 			redKing.tick();
 			blueKing.tick();
 			if(redKing.getReady()&&blueKing.getReady()){
+				redKing.getSpecialMoves();
+				blueKing.getSpecialMoves();
 				redKing.takeHit(blueKing.getKingAttackPower());
 				blueKing.takeHit(redKing.getKingAttackPower());
 				redKing.setUpForNewRound();
@@ -173,4 +175,7 @@ public class Game implements Runnable {
 
 		
 	}
+	
+	public King getRedKing() {return redKing;}
+	public King getBlueKing() {return blueKing;}
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import Cards.Assasin;
+import Cards.Barricade;
 import Cards.Card;
 import Cards.Priest;
 
@@ -30,9 +31,11 @@ public class Picking {
 		this.blueCards = new ArrayList<Card>();
 		redCards.add(new Assasin(0,0,2,2,2,redKing,handler));
 		redCards.add(new Priest(0,0,1,3,5,redKing,handler));
+		redCards.add(new Barricade(0,0,1,4,2,redKing,handler));
 		alarm = true;
 		blueCards.add(new Assasin(0,0,2,2,2,blueKing,handler));
 		blueCards.add(new Priest(0,0,1,3,5,blueKing,handler));
+		blueCards.add(new Barricade(0,0,1,4,2,blueKing,handler));
 		
 		myTurn = true;
 		int x=Card.WIDTH,y=Card.HEIGHT*2,counter=0;

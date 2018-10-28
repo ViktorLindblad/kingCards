@@ -46,7 +46,7 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 	}
 	
 	public void mouseClicked(MouseEvent e) {
-
+		
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -71,7 +71,7 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 
 	public void mouseReleased(MouseEvent e) {
 		clicked = false;
-		notclicked=false;
+		notclicked = false;
 	}
 
 	public void mouseDragged(MouseEvent e) {

@@ -85,7 +85,7 @@ public class Card {
 		this.y = y;
 	}
 	
-	private void buyCard(){
+	public void buyCard(){
 		if(cardCost<=king.getCoins()){
 			
 			king.addCoins(-cardCost);
@@ -94,7 +94,7 @@ public class Card {
 		}
 	}
 	
-	public void selectCard(){
+	protected void selectCard(){
 
 		System.out.println("Card selected"+king.getSelectedCards().size());
 		king.getSelectedCards().add(new Card(this,king,handler));
@@ -102,26 +102,29 @@ public class Card {
 	}
 	
 	public void tick(){
-		System.out.println(king.getSelectedCards().size());
-		frameCounter++;
-		System.out.println(handler.getMouseManager().clicked +" "+handler.getMouseManager().getX() +" "+handler.getMouseManager().getY());
+		
+		
 		if(handler.getMouseManager().clicked&&
 				cardRectangle.contains(new Point(handler.getMouseManager().getX(),
-				handler.getMouseManager().getY()))&&frameCounter>120){
+				handler.getMouseManager().getY()))&&frameCounter!=0){
 			
-			frameCounter=0;
-
+			
 			if(handler.getGameState()==Handler.PICKING){
-				System.out.println("selecting");
+				
 				selectCard();
 			} else if(market&&handler.getGameState()==Handler.GAME){
-				System.out.println("buyCard");
-				buyCard();
+				
+				this.buyCard();
 				
 			} else if(!market&&handler.getGameState()==Handler.GAME){
 				playCard();
 			} 
 			
+		}
+		if(handler.getMouseManager().clicked) {
+			frameCounter++;
+		} else {
+			frameCounter=0;
 		}
 	}
 	
@@ -134,6 +137,8 @@ public class Card {
 			g.setColor(Color.ORANGE);
 		} else if(cardID==PRIEST){
 			g.setColor(Color.blue);
+		} else {
+			g.setColor(Color.MAGENTA);
 		}
 		g.drawRect(cardRectangle.x, cardRectangle.y, WIDTH, HEIGHT);
 	}
